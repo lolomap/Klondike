@@ -39,7 +39,7 @@ public class Deck : MonoBehaviour
         int columnSize = FirstColumnSize;
         foreach (Slot column in TableauColumns)
         {
-            column.Add(_cards.Take(columnSize).Reverse().ToList());
+            column.Add(_cards.Take(columnSize).Reverse().ToList(), false);
             for (int i = 0; i < columnSize; i++) _cards.Pop();
             columnSize += ColumnSizeStep;
         }

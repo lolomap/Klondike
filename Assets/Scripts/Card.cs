@@ -104,14 +104,4 @@ public class Card : MonoBehaviour
         Face.enabled = !IsClosed;
         Back.enabled = IsClosed;
     }
-
-    public static void MoveBunch(List<Card> cards, Vector2 pos, Vector2 offset)
-    {
-        Vector2 p = pos;
-        foreach (Card card in cards)
-        {
-            card.RectTransform.anchoredPosition = p; //TODO: REPLACE WITH DOTWEEN!
-            p += offset;
-        }
-    }
 }
