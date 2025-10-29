@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,6 +20,13 @@ public class Card : MonoBehaviour
 
     public Image Face;
     public Image Back;
+
+    public RectTransform RectTransform { get; private set; }
+
+    public void Awake()
+    {
+        RectTransform = GetComponent<RectTransform>();
+    }
 
     public void Flip()
     {
