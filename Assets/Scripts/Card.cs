@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -29,9 +27,8 @@ public class Card : MonoBehaviour
 
     private DraggableUI _draggable;
     
-    private Vector2 _startPosition;
     private Vector2 _forceEndPosition;
-    private Slot _startSlot;
+    private ISlot _startSlot;
 
     private void Awake()
     {
@@ -45,29 +42,33 @@ public class Card : MonoBehaviour
     private void Update()
     {
         if (!DraggableUI.Dragged) return;
-        int pos = Deck.DraggedCards.FindIndex(x => x == this);
+        int pos = Deck.Instance.DraggedCards.FindIndex(x => x == this);
         if (pos < 0) return;
 
-        RectTransform.anchoredPosition = DraggableUI.Dragged.Rect.anchoredPosition + Deck.DraggedOffset * pos;
+        RectTransform.anchoredPosition = DraggableUI.Dragged.Rect.anchoredPosition + Deck.Instance.DraggedOffset * pos;
     }
 
     private void OnDragBegin(PointerEventData data)
     {
-        _startPosition = RectTransform.anchoredPosition;
-        
         List<RaycastResult> hits = new();
         EventSystem.current.RaycastAll(data, hits);
-        RaycastResult hit = hits.Find(x => x.gameObject.GetComponent<Slot>() != null);
+        RaycastResult hit = hits.Find(x => x.gameObject.GetComponent<ISlot>() != null);
         
         if (hit.gameObject != null)
         {
-            Slot hitSlot = hit.gameObject.GetComponent<Slot>();
+            ISlot hitSlot = hit.gameObject.GetComponent<ISlot>();
             if (hitSlot != null)
             {
                 _startSlot = hitSlot;
                 _draggable.IsDraggable = hitSlot.CanTakeFrom(this);
                 if (_draggable.IsDraggable)
-                    Deck.DraggedCards = hitSlot.TakeFrom(this);
+                {
+                    Deck.Instance.DraggedCards = hitSlot.TakeFrom(this);
+                    foreach (Card card in Deck.Instance.DraggedCards)
+                    {
+                        card.transform.SetParent(Deck.Instance.DraggingParent, true);
+                    }
+                }
             }
         }
         else
@@ -80,22 +81,22 @@ public class Card : MonoBehaviour
     {
         List<RaycastResult> hits = new();
         EventSystem.current.RaycastAll(data, hits);
-        RaycastResult hit = hits.Find(x => x.gameObject.GetComponent<Slot>() != null);
+        RaycastResult hit = hits.Find(x => x.gameObject.GetComponent<ISlot>() != null);
         
         if (hit.gameObject != null)
         {
-            Slot hitSlot = hit.gameObject.GetComponent<Slot>();
+            ISlot hitSlot = hit.gameObject.GetComponent<ISlot>();
             if (hitSlot != null)
             {
-                if (hitSlot.CanAdd(Deck.DraggedCards))
-                    hitSlot.Add(Deck.DraggedCards);
+                if (hitSlot.CanAdd(Deck.Instance.DraggedCards))
+                    hitSlot.Add(Deck.Instance.DraggedCards);
                 else
-                    _startSlot.Add(Deck.DraggedCards);
+                    _startSlot.Add(Deck.Instance.DraggedCards);
             }
         }
-        else _startSlot.Add(Deck.DraggedCards);
+        else _startSlot.Add(Deck.Instance.DraggedCards);
         
-        Deck.DraggedCards.Clear();
+        Deck.Instance.DraggedCards.Clear();
     }
 
     public void Flip()

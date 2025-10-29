@@ -1,10 +1,19 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 
-public abstract class Slot : MonoBehaviour
+// Interface is used to make Deck acts like Slot while using Stack
+public interface ISlot
+{
+    public bool CanTakeFrom(Card card);
+    public bool CanAdd(List<Card> cards);
+
+    public List<Card> TakeFrom(Card card);
+    public void Add(List<Card> cards, bool animated = true);
+}
+
+public abstract class Slot : MonoBehaviour, ISlot
 {
     public Vector2 Offset;
 
