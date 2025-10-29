@@ -11,7 +11,7 @@ public abstract class Slot : MonoBehaviour
     
     protected readonly List<Card> Content = new();
 
-    public void Awake()
+    private void Awake()
     {
         RectTransform = GetComponent<RectTransform>();
     }
@@ -42,7 +42,7 @@ public abstract class Slot : MonoBehaviour
 
         Vector3 lastPosition = Content.Count > 0
             ? Content[^1].RectTransform.anchoredPosition
-            : RectTransform.anchoredPosition - new Vector2(0f, cards[0].RectTransform.rect.height / 2f);
+            : new Vector2(0f, -cards[0].RectTransform.rect.height / 2f);
         foreach (Card card in cards)
         {
             Content.Add(card);

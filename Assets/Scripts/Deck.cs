@@ -8,12 +8,15 @@ public class Deck : MonoBehaviour
     public List<Slot> TableauColumns = new();
     public int FirstColumnSize;
     public int ColumnSizeStep;
+    public static Vector2 DraggedOffset = new Vector2(0, -25);
 
     public Card CardPrefab;
+
+    public static List<Card> DraggedCards = new();
     
     private Stack<Card> _cards;
 
-    public void Start()
+    private void Start()
     {
         List<Card> cards = new();
         
@@ -22,6 +25,7 @@ public class Deck : MonoBehaviour
         {
             foreach (Card.SuitType suit in Enum.GetValues(typeof(Card.SuitType)))
             {
+                // Another implementation way: instantiation could happen on Take only
                 Card card = Instantiate(CardPrefab, transform, false);
                 card.Rank = i;
                 card.Suit = suit;
